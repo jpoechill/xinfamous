@@ -1,6 +1,6 @@
-# XInfamous
+# xInfamous
 
-![alt text](http://xinfamous.tk/static/screenshot-031318.png)
+![ScreenShot](http://xinfamous.tk/static/screenshot-031318.png)
 
 > A Vue.js project
 
