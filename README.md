@@ -4,6 +4,14 @@
 
 > A Vue.js project
 
+Goals/Purpose: 
+
+• Allow players to visualize their win/loss streaks when in game (or not), and when menus are not available
+
+To-dos:
+
+• Calculate history exact win/loss points from current Infamy, and ranking
+
 ## Build Setup
 
 ``` bash
