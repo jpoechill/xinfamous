@@ -10,7 +10,7 @@ Goals/Purpose:
 
 To-dos:
 
-• Calculate history exact win/loss points from current Infamy, and ranking
+• Calculate more exact win/loss points from current Infamy, and ranking
 
 ## Build Setup
 
