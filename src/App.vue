@@ -1,37 +1,82 @@
 <template>
-<!-- align-items-center -->
-  <div id="app" class="d-flex pt-5 h-100">
+  <div id="app" class="d-flex pt-4 h-100">
     <div class="w-100">
       <div class="container">
         <div class="row">
           <div class="col-lg-6">
-              <a href="#">xInfamous
-              (<transition name="slide-fade" mode="out-in">
-                <span :key="currInfamyLevel">{{ currInfamyLevel }}</span>
-              </transition>)</a><br>
+              <a href="#">xInfamous Namechange</a><br>
               <input v-on:keyup.enter="sayHello" ref="el" v-model="handle" type="text" placeholder="@PSNusername" autofous>
           </div>
-          <div class="col-md-6 pl-5 text-right">
-            <div class="d-inline-block text-left">
+          <div class="col-md-6 pl-5 text-right float-left">
+            <!-- <div class="d-inline-block text-left">
               Current Infamy <br>
               Points to Next <br>
               Points to Reset
-            </div>
+            </div> -->
             <div class="d-inline-block w-25 pl-2">
               <transition name="slide-fade" mode="out-in">
                 <div :key="currInfamy" class="text-right">
-                  {{ currInfamy }}<br>
-                  {{ pointsToNext }}<br>
-                  {{ pointsToReset }}
+                  <br>
+                  (<transition name="slide-fade" mode="out-in">
+                    <span :key="currInfamyLevel">{{ currInfamyLevel }}</span>
+                  </transition>)
+                  :{{ addCommas(currInfamy) }}<br>
                 </div>
               </transition>
             </div>
           </div>
         </div>
       </div>
+      <!-- <section>
+        <div class="container pt-3">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="w-100">
+                <div class="d-inline-block w-50 float-left">
+                  Points to Next <br>
+                  Points to Reset
+                </div>
+                <div class="d-inline-block w-50 text-right">
+                  270<br>
+                  270
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="w-100">
+                <div class="d-inline-block w-50 float-left">
+                  Max Wins to Next <br>
+                  Min. Wins to Next
+                </div>
+                <div class="d-inline-block w-50 text-right">
+                  270<br>
+                  270
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="w-100">
+                <div class="d-inline-block w-50 float-left">
+                  Max Wins to Reset <br>
+                  Min. Wins to Reset
+                </div>
+                <div class="d-inline-block w-50 text-right">
+                  270<br>
+                  270
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section> -->
       <section>
-        <div class="container pt-4">
-          <div class="row pt-3">
+        <div class="container pt-3">
+          <div class="row">
+            <div class="col-md-12">
+              <hr>
+            </div>
+          </div>
+          <div class="row pt-4">
             <div v-for="(lastGames, index) in allGamesSorted" :key="index" class="col-md-4 pb-3">
               <div v-if="index < 12">
                 <div v-if="allGamesSorted[0] && !allGamesSorted[index].values.standing.basic.value" class="ripple-lgt tab p-2 mt-2 mb-2 text-light ls-1 font-weight-bold text-center bg-grn rounded">
@@ -40,33 +85,27 @@
                 <div v-else class="ripple-drk tab p-2 mt-2 mb-2 text-light ls-1 font-weight-bold text-center bg-red rounded">
                   LOSS
                 </div>
-                <!-- <button data-toggle="tooltip" data-placement="top" title="Tooltip on top">123</button> -->
-                <!-- + {{ index }} -->
                 <div class="w-100">
                   <div v-if="allGamesSorted[0] && !allGamesSorted[index].values.standing.basic.value" class="d-inline-block w-50 float-left">
-                    + {{ calcWin() }}
+                    + {{ streakScore(index) }}
                   </div>
                   <div v-else class="d-inline-block w-50 float-left">
-                    + {{ calcLoss() }}
-                  </div>
-                  <div class="d-inline-block text-right w-50">
-                    <!-- G{{ index }} -->
+                    + {{ streakScore(index) }}
                   </div>
                 </div>
               </div>
             </div>
-            <div v-if="allGamesSorted.length === 0" class="col-md-4 pb-4">
-              Loading...
-            </div>
+          <div v-if="allGamesSorted.length === 0" class="col-md-4 pb-4">
+            Loading...
           </div>
         </div>
-      </section>
-      <div class="container">
-        <div class="row pt-4 pb-2">
-            <div class="col-lg-12">
-                Discretion: <br>
-                Points gained and lost are  projections based solely on data from your W/L record and does not account for those gained by bounties and other means.
-            </div>
+      </div>
+    </section>
+    <div class="container">
+      <div class="row pt-3 pb-2">
+          <div class="col-lg-12">
+              Discretion: <br>
+              Points gained and lost are  projections based solely on data from your W/L record and does not account for those gained by bounties and other means.
           </div>
         </div>
       </div>
@@ -94,6 +133,26 @@ export default {
       chars: [],
       allGames: new Array(12),
       infamySteps: [0, 250, 600, 1000, 1550, 2500, 3100, 3750, 4500, 5350, 6350, 7500, 8800, 10300, 12000, 15000],
+      infamyLvls: {
+        0: {
+          arr: [80, 100, 150, 175, 190, 200]
+        },
+        1: {
+          arr: [75, 110, 160, 185, 200, 240]
+        },
+        2: {
+          arr: [65, 120, 170, 195, 210, 220]
+        },
+        3: {
+          arr: [50, 130, 180, 205, 220, 230]
+        },
+        4: {
+          arr: [30, 140, 190, 215, 230, 240]
+        },
+        5: {
+          arr: [0, 150, 200, 225, 240, 250]
+        },
+      },
       info: null
     }
   },
@@ -106,13 +165,13 @@ export default {
       }).reverse().slice(0, 12)
 
       // console.log(this.allGames)
-      console.log(sorted)
+      // console.log(sorted)
 
-      sorted.forEach(function(item) {
-        console.log(item.period)
-        console.log(item.activityDetails.mode)
-        console.log(item.values.standing.basic.displayValue)
-      })
+      // sorted.forEach(function(item) {
+      //   console.log(item.period)
+      //   console.log(item.activityDetails.mode)
+      //   console.log(item.values.standing.basic.displayValue)
+      // })
 
       // this.allGames.forEach((i) => {
       //   console.log(i.values.standing.basic.displayValue)
@@ -120,6 +179,24 @@ export default {
 
       return sorted
     },
+    // streakScore: function () {
+    //   return 123
+    //   // if (this.allGamesSorted.length >= 1) {
+    //   //   let streakCount = this.allGamesSorted.map((game, index) => {
+    //   //     let res = game.values.standing.basic.value
+    //   //     // return 123
+    //   //     if (res = 0) {
+    //   //       return 'Loss'
+    //   //     } else {
+    //   //       return 'Win'
+    //   //     }
+    //   //   })
+
+    //   //   return streakCount[index]
+    //   // } else {
+    //   //   return 0
+    //   // }
+    // },
     currInfamyLevel: function () {
       // this.currInfamy
       let currInfamy = this.currInfamy
@@ -164,11 +241,63 @@ export default {
         this.getIDByUsername()
       }
     },
+    addCommas (num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+    streakScore: function (index) {
+      // return 123
+      let games = this.allGamesSorted
+
+      if (games.length >= 1) {
+
+        let arr = games.map((game, index) => {
+          if (game.values.standing.basic.value === 0) {
+            return 1
+          } else {
+            return 0
+          }
+        })
+
+
+        let countIndex = index
+        let currStreak = 0
+        let streakCount = arr.map((n, index) => {
+
+
+          if (n === 0) {
+            return this.infamyLvls[this.currInfamyLevel].arr[0]
+          } else if (n === 1 && arr[index-1] === 0) {
+            // First game in streak
+            return this.infamyLvls[this.currInfamyLevel].arr[1]
+          } else if (n === 1 && arr[index-1] !== 0 && index === (arr.length - 1)) {
+            // Last game in streak
+            return this.infamyLvls[this.currInfamyLevel].arr[currStreak++]
+          } else if (n === 1 && arr[index-1] !== 0) {
+            // First n games in streak
+            
+            while (arr[countIndex] === 1) {
+              currStreak++
+              countIndex--
+            }
+            
+            return  this.infamyLvls[this.currInfamyLevel].arr[currStreak]
+          }
+        })
+
+        return streakCount[index]
+      } else {
+        return 0
+      }
+    },
     calcWin() {
-      return '100-250'
+      let currLevel = this.currInfamyLevel
+
+      return this.infamyLvls[currLevel].arr[1]
     },
     calcLoss() {
-      return '0-80'
+      let currLevel = this.currInfamyLevel
+
+      return this.infamyLvls[currLevel].arr[0]
     },
     calcPoints() {
       return 30
@@ -356,6 +485,12 @@ input[type=text] {
 .ripple-drk:active {
   background-size: 100%;
   transition: background 0s;
+}
+
+/* HR Styles, Custom */
+
+hr {
+  border-color: white !important;
 }
 
 /* Vue Transitions */
